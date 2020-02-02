@@ -17,17 +17,19 @@ def getUserInput(n):
 def main(n, num_mines):
 	print("Welcome to the greatest game ever hacked together by me!")
 	gameBoard = Board(n, num_mines)
-	gameBoard.show()
+	gameBoard.showPlaya()
 	userRow, userCol = getUserInput(n)
 	move = gameBoard.open(userRow, userCol)
 	while(move[0]):
 		print('\n')
-		gameBoard.show()
+		# gameBoard.showSol()
+		gameBoard.showPlaya()
 		userRow, userCol = getUserInput(n)
 		move = gameBoard.open(userRow, userCol)
 		if move[1]:
 			print("WINNER")
 			break
+	gameBoard.showPlaya()
 	print("LOSER")
 
 # DO NOT EDIT--------------------------------------------
