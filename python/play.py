@@ -16,19 +16,20 @@ def getUserInput(n):
 def playgame(n, num_mines):
 	gameBoard = Board(n, num_mines)
 	gameBoard.showSol()
-	gameBoard.showPlayerBoard()
+	gameBoard.showPlayerBoard(False)
 	userRow, userCol = getUserInput(n)
 	move = gameBoard.open(userRow, userCol)
 	while(move):
 		print('\n')
 		# gameBoard.showSol()
 		gameBoard.showSol()
-		gameBoard.showPlayerBoard()
+		gameBoard.showPlayerBoard(False)
 		userRow, userCol = getUserInput(n)
 		move = gameBoard.open(userRow, userCol)
 		if gameBoard.checkWin():
+			gameBoard.showPlayerBoard(True)
 			return True
-	gameBoard.showPlayerBoard()
+	gameBoard.showPlayerBoard(False)
 	return False
 
 def printMenu():
@@ -36,8 +37,6 @@ def printMenu():
 	print("All moves should be entered as follows:")
 	print("[row] [col]")
 	input("Press Enter to begin!")
-
-
 
 def main(n, num_mines):
 	printMenu()
@@ -51,12 +50,7 @@ def main(n, num_mines):
 		while choice != 'yes' and choice != 'no':
 			print("Please enter 'yes' or 'no'")
 			choice = str.lower(input())
-	print("Thank you for playing Minesweeper 2k20. Have a great day!")
-
-
-
-
-	
+	print("Thank you for playing Minesweeper 2k20. Have a great day!")	
 
 # DO NOT EDIT--------------------------------------------
 

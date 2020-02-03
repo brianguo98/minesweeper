@@ -1,7 +1,6 @@
 import random
 
-# Minesweeper
-
+# Minesweeper by Brian Guo
 
 class Cell:
     def __init__(self, state='X', isMine=False):
@@ -14,10 +13,9 @@ class Cell:
 class Board:
     def __init__(self, n, num_mines):
         self.num_mines = num_mines
-        self.cellsRemaining = n*n
         self.dimension = n
         self.playerBoard = [[Cell() for x in range(n)] for y in range(n)]
-        self.solutionBoard = self.setSolBoard([[Cell() for x in range(n)] for y in range(n)], self.dimension, num_mines)
+        self.solutionBoard = self.setSolBoard([[Cell() for x in range(n)] for y in range(n)], n, num_mines)
 
     def setSolBoard(self, board, n, num_mines): 
         sequence = [i for i in range(n*n)]
@@ -29,10 +27,10 @@ class Board:
                 if counter in mineLocations:
                     board[row][col].placeMine()
                 counter += 1
-        # calculate adjacent mines for cells with them
+        # for each cell, calculate adjacent cells and update board
         for row in range(n):
             for col in range(n):
-                numAdj = self.countAdjacent(board, row, col)
+                numAdj = self.countAdjacentMines(board, row, col)
                 if not board[row][col].isMine:
                     if numAdj == 0:
                         board[row][col].state = '-'
@@ -40,12 +38,19 @@ class Board:
                         board[row][col].state = numAdj
         return board
 
-    def countAdjacent(self, board, row, col):
+    def getAdjacentX(self, board, row, col):
+        xList = []
+        for (adjRow, adjCol) in self.getAdjacent(row, col):
+            # if location is within grid and has a mine
+            if board[adjRow][adjCol].state == 'X':
+                xList.append((adjRow, adjCol))
+        return xList
+
+    def countAdjacentMines(self, board, row, col):
         counter = 0
         for (adjRow, adjCol) in self.getAdjacent(row, col):
-            if (0 <= adjRow and adjRow < self.dimension
-                and 0 <= adjCol and adjCol < self.dimension
-                and board[adjRow][adjCol].isMine):
+            # if location is within grid and has a mine
+            if board[adjRow][adjCol].isMine:
                 counter += 1
         return counter
 
@@ -55,11 +60,13 @@ class Board:
                     (0,-1),            (0, 1),
                     (1, -1),  (1, 0),  (1, 1)]
         for (adjRow, adjCol) in surround:
-            adjacent.append(((row+adjRow), (col+adjCol)))
+            if (0 <= row+adjRow and row+adjRow < self.dimension
+                and 0 <= col+adjCol and col+adjCol < self.dimension):
+                adjacent.append(((row+adjRow), (col+adjCol)))
         return adjacent
 
     def autoOpen(self, row, col, visited):
-    # DFS recursive function to automatically open neighboring cells
+        # DFS recursive function to automatically open neighboring cells
         # base case 1, we've already been to this cell
         if visited[row][col]:
             return
@@ -70,21 +77,21 @@ class Board:
         visited[row][col] = True
         # for every cell adjacent to the current cell
         for (adjRow, adjCol) in self.getAdjacent(row, col):
-            # check that the adjacent cell is in the grid, not a mine, and hasn't been visited yet
-            if (0 <= adjRow and adjRow < self.dimension
-                and 0 <= adjCol and adjCol < self.dimension
-                and not self.solutionBoard[adjRow][adjCol].isMine
+            # check that the adjacent cell is not a mine and hasn't been visited yet
+            if (not self.solutionBoard[adjRow][adjCol].isMine
                 and not visited[adjRow][adjCol]):
-                # set to appropriate state
+                # set to corresponding state on solution board
                 self.playerBoard[adjRow][adjCol] = self.solutionBoard[adjRow][adjCol]
                 # recursive call
                 self.autoOpen(adjRow, adjCol, visited)
 
 
     def open(self, row, col):
+        # do nothing if cell already opened
         if self.playerBoard[row][col].state == 'X':
             if self.solutionBoard[row][col].isMine:
                 self.playerBoard[row][col].placeMine()
+                # game over!
                 return False
             else:
                 if self.solutionBoard[row][col].state == '-':
@@ -96,7 +103,6 @@ class Board:
         return True
 
     def showSol(self):
-        # print('Mines remaining: ' + str(self.minesRemaining))
         print('  ', end='')
         for rowMarker in range(self.dimension):
             print(rowMarker, end='')
@@ -111,17 +117,17 @@ class Board:
             print('\n')
 
     def checkWin(self):
+        # if number of uncovered cells matches the number of mines, winner winner
         numLeft = 0
         for row in range(0, self.dimension):
             for col in range(0, self.dimension):
-                if self.playerBoard[row][col].state == 'X':
+                if self.playerBoard[row][col].state == 'X' or self.playerBoard[row][col].state == 'M':
                     numLeft += 1
         if numLeft == self.num_mines:
             return True
         return False
 
-    def showPlayerBoard(self):
-        # print('Mines remaining: ' + str(self.minesRemaining))
+    def showPlayerBoard(self, withMines):
         print('  ', end='')
         for rowMarker in range(self.dimension):
             print(rowMarker, end='')
@@ -131,6 +137,9 @@ class Board:
             print(row, end='')
             print(' ', end='')
             for col in range(self.dimension):
-                print(self.playerBoard[row][col].state, end='')
+                if withMines and self.solutionBoard[row][col].isMine:
+                    print('M', end='')
+                else:
+                    print(self.playerBoard[row][col].state, end='')
                 print(' ', end='')
             print('\n')
