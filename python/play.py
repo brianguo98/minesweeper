@@ -1,6 +1,18 @@
 from board import Board
 import argparse
 
+def printInitialBoard(n):
+    print('  ', end='')
+    for rowMarker in range(n):
+        print(rowMarker, end='')
+        print(' ', end='')
+    print('\n')
+    for row in range(n):
+        print(row, end='')
+        print(' ', end='')
+        for col in range(n):
+            print('X ', end='')
+        print('\n')
 
 def getUserInput(n):
 	print("Please enter a move: ")
@@ -14,22 +26,22 @@ def getUserInput(n):
 	return userRow, userCol
 
 def playgame(n, num_mines):
-	gameBoard = Board(n, num_mines)
-	gameBoard.showSol()
-	gameBoard.showPlayerBoard(False)
+	printInitialBoard(n)
 	userRow, userCol = getUserInput(n)
+	gameBoard = Board(n, num_mines, userRow, userCol)
 	move = gameBoard.open(userRow, userCol)
+	gameBoard.showSol()
+	gameBoard.showplayer(False)
 	while(move):
 		print('\n')
-		# gameBoard.showSol()
 		gameBoard.showSol()
-		gameBoard.showPlayerBoard(False)
+		gameBoard.showplayer(False)
 		userRow, userCol = getUserInput(n)
 		move = gameBoard.open(userRow, userCol)
 		if gameBoard.checkWin():
-			gameBoard.showPlayerBoard(True)
+			gameBoard.showplayer(True)
 			return True
-	gameBoard.showPlayerBoard(False)
+	gameBoard.showplayer(False)
 	return False
 
 def printMenu():
