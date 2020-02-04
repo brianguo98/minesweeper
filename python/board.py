@@ -4,6 +4,25 @@ UNDERLINE = '\033[4m'
 END = '\033[0m'
 
 # Minesweeper by Brian Guo
+def getAdjacent(row, col, dimension):
+        adjacent = []
+        surround = [(-1, -1), (-1, 0), (-1, 1),
+                    (0,-1),            (0, 1),
+                    (1, -1),  (1, 0),  (1, 1)]
+        for (adjRow, adjCol) in surround:
+            # if within bounds of the board
+            if (0 <= row+adjRow and row+adjRow < dimension
+                and 0 <= col+adjCol and col+adjCol < dimension):
+                adjacent.append(((row+adjRow), (col+adjCol)))
+        return adjacent
+
+def countAdjacentMines(board, row, col, dimension):
+        counter = 0
+        for (adjRow, adjCol) in getAdjacent(row, col, dimension):
+            # if location is within grid and has a mine
+            if board[adjRow][adjCol].isMine:
+                counter += 1
+        return counter
 
 class Cell:
     def __init__(self, state='X', isMine=False):
@@ -27,49 +46,24 @@ class Board:
         mineLocations = set()
         while len(mineLocations) < num_mines:
             mineRow, mineCol = random.randint(0, n-1), random.randint(0, n-1)
-            # repeat random generation if mine already exists or is the user's first move
+            # repeat random generation if mine already exists or it's the user's first move
             while ((mineRow, mineCol) in mineLocations or
-                    (mineRow == firstRow and mineCol == firstCol and n != 1)):
+                   (mineRow == firstRow and mineCol == firstCol and n > 1)):
                 mineRow, mineCol = random.randint(0, n-1), random.randint(0, n-1)
             mineLocations.add((mineRow, mineCol))
+        # place randomly generated mines on solution board
         for mineLoc in mineLocations:
             board[mineLoc[0]][mineLoc[1]].placeMine()
+        # set adjacent counts for cells on solution board
         for row in range(n):
             for col in range(n):
-                numAdj = self.countAdjacentMines(board, row, col)
+                numAdj = countAdjacentMines(board, row, col, n)
                 if not board[row][col].isMine:
                     if numAdj == 0:
                         board[row][col].state = '.'
                     else:
                         board[row][col].state = numAdj
         return board
-
-    def getAdjacentUnopened(self, board, row, col):
-        xList = []
-        for (adjRow, adjCol) in self.getAdjacent(row, col):
-            # if location is within grid and has a mine
-            if board[adjRow][adjCol].state == 'X':
-                xList.append((adjRow, adjCol))
-        return xList
-
-    def countAdjacentMines(self, board, row, col):
-        counter = 0
-        for (adjRow, adjCol) in self.getAdjacent(row, col):
-            # if location is within grid and has a mine
-            if board[adjRow][adjCol].isMine:
-                counter += 1
-        return counter
-
-    def getAdjacent(self, row, col):
-        adjacent = []
-        surround = [(-1, -1), (-1, 0), (-1, 1),
-                    (0,-1),            (0, 1),
-                    (1, -1),  (1, 0),  (1, 1)]
-        for (adjRow, adjCol) in surround:
-            if (0 <= row+adjRow and row+adjRow < self.dimension
-                and 0 <= col+adjCol and col+adjCol < self.dimension):
-                adjacent.append(((row+adjRow), (col+adjCol)))
-        return adjacent
 
     def autoOpen(self, row, col, visited):
         # DFS recursive function to automatically open neighboring cells
@@ -82,7 +76,7 @@ class Board:
             return
         visited[row][col] = True
         # for every cell adjacent to the current cell
-        for (adjRow, adjCol) in self.getAdjacent(row, col):
+        for (adjRow, adjCol) in getAdjacent(row, col, self.dimension):
             # check that the adjacent cell is not a mine and hasn't been visited yet
             if (not self.solution[adjRow][adjCol].isMine
                 and not visited[adjRow][adjCol]):
@@ -120,8 +114,8 @@ class Board:
         return False
 
     def showplayer(self, withMines):
-        print('Current player board:')
-        print('  ', end='')
+        # it's not always pretty
+        print('   ', end='')
         for colMarker in range(self.dimension):
             print(UNDERLINE + str(colMarker) + END, end='')
             if colMarker < 10:
@@ -131,11 +125,23 @@ class Board:
         print('\n')
         for row in range(self.dimension):
             print(UNDERLINE + str(row) + END, end='')
-            print(' ', end='')
+            if row < 10:
+                print('  ', end='')
+            else:
+                print(' ', end='')
             for col in range(self.dimension):
                 if withMines and self.solution[row][col].isMine:
                     print('M', end='')
                 else:
                     print(self.player[row][col].state, end='')
                 print('  ', end='')
+            print(UNDERLINE + str(row) + END, end='')
             print('\n')
+        print('   ', end='')
+        for colMarker in range(self.dimension):
+            print(UNDERLINE + str(colMarker) + END, end='')
+            if colMarker < 10:
+                print('  ', end='')
+            else:
+                print(' ', end='')
+        print('\n')

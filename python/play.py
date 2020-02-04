@@ -6,7 +6,8 @@ UNDERLINE = '\033[4m'
 END = '\033[0m'
 
 def printInitialBoard(n):
-    print('  ', end='')
+	# not pretty but does the job
+    print('   ', end='')
     for colMarker in range(n):
         print(UNDERLINE + str(colMarker) + END, end='')
         if colMarker < 10:
@@ -16,19 +17,45 @@ def printInitialBoard(n):
     print('\n')
     for row in range(n):
         print(UNDERLINE + str(row) + END, end='')
-        print(' ', end='')
+        if row < 10:
+            print('  ', end='')
+        else:
+            print(' ', end='')
         for col in range(n):
             print('X', end='')
             print('  ', end='')
+        print(UNDERLINE + str(row) + END, end='')
         print('\n')
+    print('   ', end='')
+    for colMarker in range(n):
+        print(UNDERLINE + str(colMarker) + END, end='')
+        if colMarker < 10:
+            print('  ', end='')
+        else:
+            print(' ', end='')
+    print('\n')
+
+
+def constructRegex(n):
+	n -= 1
+	if n <= 10:
+		return '^([0-'+str(n)+']\s[0-'+str(n)+'])$'
+	regex = '|'+str(int(n/10))+'[0-'+str(n%10)+'])'
+	n -= int(n%10) + 10
+	while n >= 10:
+		regex = '|'+str(int(n/10))+'[0-9]' + regex
+		n -= 10
+	regex = '([0-9]' + regex
+	return '^'+regex + '\s' + regex+'$'
 
 def getUserInput(n):
 	# robust input validation. Ensures that game doesn't crash due to wrong input format
 	print("Please enter a move: ")
 	userIn = input()
-	while not re.match('^[0-'+str(n-1)+']\s[0-'+str(n-1)+']$', str(userIn)):
+	# regex checks for spacing/correct number range
+	while not re.match(constructRegex(n), str(userIn)):
 		print("Oops! Something was wrong with your input...")
-		print("Please check that your input is in the format [[row] [col]] and your values are between 0 and " + str(n-1))
+		print("Please ensure that your input is in the format [[row] [col]] and your values are between 0 and " + str(n-1))
 		print("Please enter a move: ")
 		userIn = input()
 	userRow, userCol = map(int, userIn.split())
@@ -39,10 +66,12 @@ def playgame(n, num_mines):
 	userRow, userCol = getUserInput(n)
 	gameBoard = Board(n, num_mines, userRow, userCol)
 	move = gameBoard.open(userRow, userCol)
-	# gameBoard.showSol()
+	if gameBoard.checkWin():
+			print('\n')
+			gameBoard.showplayer(True)
+			return True
 	while(move):
 		print('\n')
-		# gameBoard.showSol()
 		gameBoard.showplayer(False)
 		userRow, userCol = getUserInput(n)
 		move = gameBoard.open(userRow, userCol)
@@ -56,7 +85,10 @@ def playgame(n, num_mines):
 
 def checkValidGame(n, num_mines):
 	if n == 0 or num_mines > n*n-1:
-		print("Illegal game. Board must be at least 1x1 and num_mines must be at least 1 less than the total number of cells.")
+		print("Illegal game. Board must be at least 1x1, num_mines must be at least 1 less than the total number of cells.")
+		return False
+	if n == 1:
+		print("Making it easy on yourself, eh? :)")
 		return False
 	return True
 
