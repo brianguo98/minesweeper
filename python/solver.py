@@ -39,7 +39,7 @@ def attemptSolve(board):
 		n = int(board.dimension)
 		openRow, openCol = random.randint(0, n-1), random.randint(0, n-1)
 		while board.player[openRow][openCol].state != 'X':
-			print("in loop")
+			# print("in loop")
 			openRow, openCol = random.randint(0, n-1), random.randint(0, n-1)
 		# if opening this cell causes us to lose, it's over :(
 		if not board.open(openRow, openCol):
@@ -59,11 +59,13 @@ def solve(gameBoard) -> bool:
 		# gameBoard.showSol()
 		# print("Player board:")
 		# gameBoard.showplayer(False)
-		stillAlive = attemptSolve(gameBoard)
 		if gameBoard.checkWin():
 			# gameBoard.showplayer(True)
 			# print("YEAH BOIIII")
 			return True
+		stillAlive = attemptSolve(gameBoard)
+		
+		
 	# print("LOSER")
 	# gameBoard.showplayer(False)
 	return False
