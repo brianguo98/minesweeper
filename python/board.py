@@ -1,5 +1,8 @@
 import random
 
+UNDERLINE = '\033[4m'
+END = '\033[0m'
+
 # Minesweeper by Brian Guo
 
 class Cell:
@@ -11,12 +14,12 @@ class Cell:
         self.state = 'M'
 
 class Board:
-    def __init__(self, n, num_mines, firstRow, firstCol):
+    def __init__(self, n, num_mines, firstRow=0, firstCol=0):
         self.num_mines = num_mines
         self.dimension = n
-        # player board is what the user sees when playing
+        # player is what the user sees when playing
         self.player = [[Cell() for x in range(n)] for y in range(n)]
-        # solution board is under the hood
+        # solution is under the hood
         self.solution = self.setSolBoard([[Cell() for x in range(n)] for y in range(n)], n, num_mines, firstRow, firstCol)
 
     def setSolBoard(self, board, n, num_mines, firstRow, firstCol):
@@ -26,25 +29,11 @@ class Board:
             mineRow, mineCol = random.randint(0, n-1), random.randint(0, n-1)
             # repeat random generation if mine already exists or is the user's first move
             while ((mineRow, mineCol) in mineLocations or
-                    (mineRow == firstRow and mineCol == firstCol)):
+                    (mineRow == firstRow and mineCol == firstCol and n != 1)):
                 mineRow, mineCol = random.randint(0, n-1), random.randint(0, n-1)
             mineLocations.add((mineRow, mineCol))
         for mineLoc in mineLocations:
             board[mineLoc[0]][mineLoc[1]].placeMine()
-
-        # sequence = [i for i in range(n*n)]
-        # mineLocations = set(random.sample(sequence, num_mines))
-        # counter = 0
-        # # set randomized mine locations
-        # for row in range(n):
-        #     for col in range(n):
-        #         if counter in mineLocations:
-        #             # guarantees that user will not lose on first move
-        #             if row == firstRow and col == firstCol:
-
-        #             board[row][col].placeMine()
-        #         counter += 1
-        # for each cell, calculate adjacent cells and update board
         for row in range(n):
             for col in range(n):
                 numAdj = self.countAdjacentMines(board, row, col)
@@ -119,20 +108,6 @@ class Board:
             return True
         return True
 
-    def showSol(self):
-        print('  ', end='')
-        for rowMarker in range(self.dimension):
-            print(rowMarker, end='')
-            print(' ', end='')
-        print('\n')
-        for row in range(self.dimension):
-            print(row, end='')
-            print(' ', end='')
-            for col in range(self.dimension):
-                print(self.solution[row][col].state, end='')
-                print(' ', end='')
-            print('\n')
-
     def checkWin(self):
         # if number of uncovered cells matches the number of mines, winner winner
         numLeft = 0
@@ -145,18 +120,22 @@ class Board:
         return False
 
     def showplayer(self, withMines):
+        print('Current player board:')
         print('  ', end='')
-        for rowMarker in range(self.dimension):
-            print(rowMarker, end='')
-            print(' ', end='')
+        for colMarker in range(self.dimension):
+            print(UNDERLINE + str(colMarker) + END, end='')
+            if colMarker < 10:
+                print('  ', end='')
+            else:
+                print(' ', end='')
         print('\n')
         for row in range(self.dimension):
-            print(row, end='')
+            print(UNDERLINE + str(row) + END, end='')
             print(' ', end='')
             for col in range(self.dimension):
                 if withMines and self.solution[row][col].isMine:
                     print('M', end='')
                 else:
                     print(self.player[row][col].state, end='')
-                print(' ', end='')
+                print('  ', end='')
             print('\n')

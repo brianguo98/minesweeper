@@ -7,7 +7,7 @@ def run_solver(n, num_mines, num_trials):
     wins = 0
     start_time = time.time()
     for i in range(num_trials):
-        board = Board(n, num_mines, 0, 0)
+        board = Board(n, num_mines)
         if solve(board):
             wins += 1
 
