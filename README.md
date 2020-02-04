@@ -1,7 +1,11 @@
-# Welcome to the Tophatter Coding Challenge
+# Welcome to Brian Guo's implementation of the Tophatter Coding Challenge
 
 The challenge can be found at https://tophatter.com/challenge.
 
-Feel free to clone this repo and work in the language of your choice.
+This implementation of Minesweeper contains a command-line playable version and a solver.
 
-Please submit your challenge as a packaged ZIP file, a Dropbox link, or a Github repository to apply@tophatter.com.
+To play the game on the command line, navigate to the /python folder and run:
+python play.py [n] [num_mines]
+
+To run the solver, navigate to the /python folder and run:
+python run_solver.py [n] [num_mines] [num_trials]
