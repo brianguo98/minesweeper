@@ -2,6 +2,10 @@
 import argparse, time
 from solver import solve
 from board import Board
+import sys
+
+sys.setrecursionlimit(10**6)
+
 
 def run_solver(n, num_mines, num_trials):
     wins = 0
