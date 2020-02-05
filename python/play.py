@@ -1,6 +1,9 @@
 from board import Board
 import argparse
 import re
+import sys
+
+sys.setrecursionlimit(10**6)
 
 UNDERLINE = '\033[4m'
 END = '\033[0m'
