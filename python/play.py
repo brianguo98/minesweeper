@@ -1,4 +1,5 @@
 from board import Board
+from board import printColMarker
 import argparse
 import re
 import sys
@@ -11,12 +12,7 @@ END = '\033[0m'
 def printInitialBoard(n):
 	# not pretty but does the job
     print('   ', end='')
-    for colMarker in range(n):
-        print(UNDERLINE + str(colMarker) + END, end='')
-        if colMarker < 10:
-            print('  ', end='')
-        else:
-            print(' ', end='')
+    printColMarker(n)
     print('\n')
     for row in range(n):
         print(UNDERLINE + str(row) + END, end='')
@@ -30,16 +26,12 @@ def printInitialBoard(n):
         print(UNDERLINE + str(row) + END, end='')
         print('\n')
     print('   ', end='')
-    for colMarker in range(n):
-        print(UNDERLINE + str(colMarker) + END, end='')
-        if colMarker < 10:
-            print('  ', end='')
-        else:
-            print(' ', end='')
+    printColMarker(n)
     print('\n')
 
 
 def constructRegex(n):
+	# creates regex that validates user input format and value range
 	n -= 1
 	if n <= 10:
 		return '^([0-'+str(n)+']\s[0-'+str(n)+'])$'
@@ -70,19 +62,15 @@ def playgame(n, num_mines):
 	gameBoard = Board(n, num_mines, userRow, userCol)
 	move = gameBoard.open(userRow, userCol)
 	if gameBoard.checkWin():
-			print('\n')
-			gameBoard.showplayer(True)
-			return True
+		gameBoard.showplayer(True)
+		return True
 	while(move):
-		print('\n')
 		gameBoard.showplayer(False)
 		userRow, userCol = getUserInput(n)
 		move = gameBoard.open(userRow, userCol)
 		if gameBoard.checkWin():
-			print('\n')
 			gameBoard.showplayer(True)
 			return True
-	print('\n')
 	gameBoard.showplayer(False)
 	return False
 
@@ -113,6 +101,7 @@ def main(n, num_mines):
 		else:
 			print("\nYou've opened a mine :( Better luck next time! Would you like to play again? (yes or no)")
 		choice = str.lower(input())
+		print('\n')
 		while choice != 'yes' and choice != 'no':
 			print("Please enter 'yes' or 'no'")
 			choice = str.lower(input())

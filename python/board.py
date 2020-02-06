@@ -24,6 +24,14 @@ def countAdjacentMines(board, row, col, dimension):
                 counter += 1
         return counter
 
+def printColMarker(dimension):
+    for colMarker in range(dimension):
+        print(UNDERLINE + str(colMarker) + END, end='')
+        if colMarker < 10:
+            print('  ', end='')
+        else:
+            print(' ', end='')
+
 class Cell:
     def __init__(self, state='X', isMine=False):
         self.state = state
@@ -94,12 +102,13 @@ class Board:
                 # game over!
                 return False
             else:
+                # open cell with no adjacent mines and any others around it
                 if self.solution[row][col].state == '.':
                     self.player[row][col].state = '.'
                     self.autoOpen(row, col, [[False for x in range(self.dimension)] for y in range(self.dimension)])
+                # open cell with adjacent mines
                 else:
                     self.player[row][col].state = self.solution[row][col].state
-            return True
         return True
 
     def checkWin(self):
@@ -115,13 +124,8 @@ class Board:
 
     def showplayer(self, withMines):
         # it's not always pretty
-        print('   ', end='')
-        for colMarker in range(self.dimension):
-            print(UNDERLINE + str(colMarker) + END, end='')
-            if colMarker < 10:
-                print('  ', end='')
-            else:
-                print(' ', end='')
+        print('\n   ', end='')
+        printColMarker(self.dimension)
         print('\n')
         for row in range(self.dimension):
             print(UNDERLINE + str(row) + END, end='')
@@ -138,10 +142,5 @@ class Board:
             print(UNDERLINE + str(row) + END, end='')
             print('\n')
         print('   ', end='')
-        for colMarker in range(self.dimension):
-            print(UNDERLINE + str(colMarker) + END, end='')
-            if colMarker < 10:
-                print('  ', end='')
-            else:
-                print(' ', end='')
+        printColMarker(self.dimension)
         print('\n')
