@@ -9,3 +9,5 @@ python play.py [n] [num_mines]
 
 To run the solver, navigate to the /python folder and run:
 python run_solver.py [n] [num_mines] [num_trials]
+
+Thank you for playing, feedback is welcome and can be sent to brianguo@umich.edu

@@ -50,7 +50,7 @@ class Board:
         self.solution = self.setSolBoard([[Cell() for x in range(n)] for y in range(n)], n, num_mines, firstRow, firstCol)
 
     def setSolBoard(self, board, n, num_mines, firstRow, firstCol):
-        # generate 10 mine locations
+        # generate 10 mine locations.
         mineLocations = set()
         while len(mineLocations) < num_mines:
             mineRow, mineCol = random.randint(0, n-1), random.randint(0, n-1)
