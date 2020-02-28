@@ -1,6 +1,4 @@
-# Welcome to Brian Guo's implementation of the Tophatter Coding Challenge
-
-The challenge can be found at https://tophatter.com/challenge.
+# Welcome to Brian Guo's implementation of minesweeper
 
 This implementation of Minesweeper contains a command-line playable version and a solver.
 
